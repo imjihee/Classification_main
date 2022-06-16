@@ -9,10 +9,12 @@ try:
 except ImportError:
     pass
 import numpy as np
+import pandas as pd
 import torch
 import torch.nn as nn
 import torch.distributed as dist
 import torchvision
+import torchvision.models as torchvision_models
 
 from fvcore.common.checkpoint import Checkpointer
 
@@ -43,7 +45,8 @@ from pytorch_image_classification.utils import (
 )
 
 global_step = 0
-
+val_acc_log=[]
+val_loss_log=[]
 
 def load_config():
     parser = argparse.ArgumentParser()
@@ -309,6 +312,8 @@ def validate(epoch, config, model, loss_func, val_loader, logger,
                     f'loss {loss_meter.avg:.4f} '
                     f'acc@1 {acc1_meter.avg:.4f} '
                     f'acc@5 {acc5_meter.avg:.4f}')
+        val_acc_log.append(acc1_meter.avg)
+        val_loss_log.append(loss_meter.avg)
 
         elapsed = time.time() - start
         logger.info(f'Elapsed {elapsed:.2f}')
@@ -344,9 +349,9 @@ def main():
 
     output_dir = pathlib.Path(config.train.output_dir)
     if get_rank() == 0:
-        if not config.train.resume and output_dir.exists():
-            raise RuntimeError(
-                f'Output directory `{output_dir.as_posix()}` already exists')
+        #if not config.train.resume and output_dir.exists():
+        #    raise RuntimeError(
+        #        f'Output directory `{output_dir.as_posix()}` already exists')
         output_dir.mkdir(exist_ok=True, parents=True)
         if not config.train.resume:
             save_config(config, output_dir / 'config.yaml')
@@ -386,6 +391,13 @@ def main():
 
     start_epoch = config.train.start_epoch
     scheduler.last_epoch = start_epoch
+
+    #pretrained weights
+    #model = torchvision_models.resnet50(pretrained=True)
+    #fc_in = model.fc.in_features
+    #model.fc = nn.Linear(fc_in, 10)
+    #model.fc.reset_parameters()
+    
     if config.train.resume:
         checkpoint_config = checkpointer.resume_or_load('', resume=True)
         global_step = checkpoint_config['global_step']
@@ -399,7 +411,8 @@ def main():
                       (nn.DataParallel, nn.parallel.DistributedDataParallel)):
             model.module.load_state_dict(checkpoint['model'])
         else:
-            model.load_state_dict(checkpoint['model'])
+            #print("*****", model.state_dict().keys())
+            model.load_state_dict(checkpoint['model'], strict = False)
 
     if get_rank() == 0 and config.train.use_tensorboard:
         tensorboard_writer = create_tensorboard_writer(
@@ -444,6 +457,23 @@ def main():
     tensorboard_writer.close()
     tensorboard_writer2.close()
 
+    acc_data = np.concatenate(([val_acc_log],[val_loss_log]), axis=0)
+    export_toexcel(config, acc_data)
+    
+def export_toexcel(config, data):
+
+    df = pd.DataFrame(data)
+    df = (df.T)
+    
+    xlsx_path = config.train.output_dir + '/acc_log_True.xlsx'
+    writer1 = pd.ExcelWriter(xlsx_path , engine='xlsxwriter')
+
+    df.columns = ['val_acc', 'val_loss']
+    df.to_excel(writer1)
+    writer1.save()
+    print("SAVE acc_log.xlsx successfully")
 
 if __name__ == '__main__':
     main()
+    
+    

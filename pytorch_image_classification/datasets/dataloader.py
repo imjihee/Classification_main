@@ -19,7 +19,7 @@ def create_dataloader(
         config: yacs.config.CfgNode,
         is_train: bool) -> Union[Tuple[DataLoader, DataLoader], DataLoader]:
     if is_train:
-        train_dataset, val_dataset = create_dataset(config, is_train)
+        train_dataset, val_dataset = create_dataset(config, is_train) #create dataset
 
         if dist.is_available() and dist.is_initialized():
             train_sampler = torch.utils.data.distributed.DistributedSampler(

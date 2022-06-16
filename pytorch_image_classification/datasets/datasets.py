@@ -1,6 +1,7 @@
 from typing import Tuple, Union
 
 import pathlib
+import pandas as pd
 
 import torch
 import torchvision
@@ -41,14 +42,22 @@ def create_dataset(config: yacs.config.CfgNode,
                 train_transform = create_transform(config, is_train=True)
                 val_transform = create_transform(config, is_train=False)
                 train_dataset = module(config.dataset.dataset_dir,
-                                       train=is_train,
-                                       transform=train_transform,
-                                       download=True)
+                                        train=is_train,
+                                        transform=train_transform,
+                                        download=True)
+                if config.train.small_train:
+                    train_num = int(len(train_dataset) * 0.1)
+                    train_subset, _ = torch.utils.data.dataset.random_split(train_dataset, [train_num, len(train_dataset)-train_num])
+                    train_dataset = SubsetDataset(train_subset)
+
                 test_dataset = module(config.dataset.dataset_dir,
                                       train=False,
                                       transform=val_transform,
                                       download=True)
+                print("*** length of train_dataset and test_dataset:", len(train_dataset), len(test_dataset))
                 return train_dataset, test_dataset
+
+            #Split train as train and val data
             else:
                 dataset = module(config.dataset.dataset_dir,
                                  train=is_train,

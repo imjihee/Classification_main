@@ -6,11 +6,12 @@ model:
   name: resnet
   init_mode: kaiming_fan_out
   resnet:
-    depth: 110
+    depth: 50
     initial_channels: 16
     block_type: basic
 train:
   seed: 0
+  small_train: True #For Small Transet (10% of total)
   precision: O0
   batch_size: 128
   subdivision: 1
@@ -19,13 +20,14 @@ train:
   momentum: 0.9
   nesterov: True
   weight_decay: 1e-4
-  output_dir: experiments/cifar10/resnet/exp00
+  output_dir: experiments/cifar10/exp00
   log_period: 100
   checkpoint_period: 100
+  #checkpoint: /home/esoc/jihee/Image_Classification/experiments/cifar10/resnet/exp00/checkpoint_00160.pth
   val_ratio: 0.0
   use_test_as_val: True
   use_tensorboard: True
-  distributed: False
+  distributed: False 
   dataloader:
     num_workers: 2
     drop_last: True
@@ -37,7 +39,7 @@ validation:
     drop_last: False
     pin_memory: False
 scheduler:
-  epochs: 160
+  epochs: 10
   type: multistep
   milestones: [80, 120]
   lr_decay: 0.1

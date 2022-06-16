@@ -98,6 +98,7 @@ config.train.use_apex = True
 # O3 = fp16
 config.train.precision = 'O0'
 config.train.batch_size = 128
+config.train.small_train = False
 config.train.subdivision = 1
 # optimizer (options: sgd, adam, lars, adabound, adaboundw)
 config.train.optimizer = 'sgd'
