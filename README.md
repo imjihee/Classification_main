@@ -30,13 +30,15 @@ Following papers are implemented using PyTorch.
 pip install -r requirements.txt
 ```
 
-## Usage
+## Usage-Jihee
 
 ```bash
 python train.py --config configs/cifar/resnet_preact.yaml
 ```
 
+## Highlight locations
 
+* train_small -> datasets.py
 
 ## Results on CIFAR-10
 
@@ -82,14 +84,6 @@ python train.py --config configs/cifar/resnet_preact.yaml
 * Experiments with only 1 run are done on different computer from the one used for experiments with 3 runs.
 * GeForce GTX 980 was used in these experiments.
 
-#### VGG-like
-
-```bash
-python train.py --config configs/cifar/vgg.yaml
-```
-
-![](figures/cifar10/VGG-15_BN_64.png)
-
 
 #### ResNet
 
@@ -119,99 +113,7 @@ python train.py --config configs/cifar/resnet_preact.yaml \
 
 ![](figures/cifar10/ResNet-preact-164_bottleneck.png)
 
-
-#### WRN
-
-```bash
-python train.py --config configs/cifar/wrn.yaml
-```
-
-![](figures/cifar10/WRN-28-10.png)
-
-
-#### DenseNet
-
-```bash
-python train.py --config configs/cifar/densenet.yaml
-```
-
-![](figures/cifar10/DenseNet-BC-100_k_12.png)
-
-
-#### PyramidNet
-
-```bash
-python train.py --config configs/cifar/pyramidnet.yaml \
-    model.pyramidnet.depth 110 \
-    model.pyramidnet.block_type basic \
-    model.pyramidnet.alpha 84 \
-    train.output_dir experiments/pyramidnet_basic_110_84/exp00
-```
-
-![](figures/cifar10/PyramidNet-110_alpha_84.png)
-
-```bash
-python train.py --config configs/cifar/pyramidnet.yaml \
-    model.pyramidnet.depth 110 \
-    model.pyramidnet.block_type basic \
-    model.pyramidnet.alpha 270 \
-    train.output_dir experiments/pyramidnet_basic_110_270/exp00
-```
-
-![](figures/cifar10/PyramidNet-110_alpha_270.png)
-
-
-#### ResNeXt
-
-```bash
-python train.py --config configs/cifar/resnext.yaml \
-    model.resnext.cardinality 4 \
-    train.batch_size 32 \
-    train.base_lr 0.025 \
-    train.output_dir experiments/resnext_29_4x64d/exp00
-```
-
-![](figures/cifar10/ResNeXt-29_4x64d.png)
-
-```bash
-python train.py --config configs/cifar/resnext.yaml \
-    train.batch_size 64 \
-    train.base_lr 0.05 \
-    train.output_dir experiments/resnext_29_8x64d/exp00
-```
-
-![](figures/cifar10/ResNeXt-29_8x64d.png)
-
-
-#### shake-shake
-
-```bash
-python train.py --config configs/cifar/shake_shake.yaml \
-    model.shake_shake.initial_channels 32 \
-    train.output_dir experiments/shake_shake_26_2x32d_SSI/exp00
-```
-
-![](figures/cifar10/shake-shake-26_2x32d.png)
-
-```bash
-python train.py --config configs/cifar/shake_shake.yaml \
-    model.shake_shake.initial_channels 64 \
-    train.batch_size 64 \
-    train.base_lr 0.1 \
-    train.output_dir experiments/shake_shake_26_2x64d_SSI/exp00
-```
-
-![](figures/cifar10/shake-shake-26_2x64d.png)
-
-```bash
-python train.py --config configs/cifar/shake_shake.yaml \
-    model.shake_shake.initial_channels 96 \
-    train.batch_size 64 \
-    train.base_lr 0.1 \
-    train.output_dir experiments/shake_shake_26_2x96d_SSI/exp00
-```
-
-![](figures/cifar10/shake-shake-26_2x96d.png)
+#### ResNet
 
 
 ### Results
@@ -332,21 +234,6 @@ python -m torch.distributed.launch --nproc_per_node 4 \
     scheduler.epochs 200 \
     scheduler.type cosine \
     train.output_dir experiments/wrn_28_10_ricap_4gpus/exp00 \
-    augmentation.use_ricap True \
-    augmentation.use_random_crop False
-```
-
-##### Using 8 GPUs
-
-```bash
-python -m torch.distributed.launch --nproc_per_node 8 \
-    train.py --config configs/cifar/wrn.yaml \
-    train.distributed True \
-    train.base_lr 0.2 \
-    train.batch_size 64 \
-    scheduler.epochs 200 \
-    scheduler.type cosine \
-    train.output_dir experiments/wrn_28_10_ricap_8gpus/exp00 \
     augmentation.use_ricap True \
     augmentation.use_random_crop False
 ```

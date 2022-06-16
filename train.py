@@ -465,7 +465,7 @@ def export_toexcel(config, data):
     df = pd.DataFrame(data)
     df = (df.T)
     
-    xlsx_path = config.train.output_dir + '/acc_log_True.xlsx'
+    xlsx_path = config.train.output_dir + '/acc_log_True.xlsx' #Small_train True
     writer1 = pd.ExcelWriter(xlsx_path , engine='xlsxwriter')
 
     df.columns = ['val_acc', 'val_loss']

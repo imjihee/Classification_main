@@ -45,6 +45,7 @@ def create_dataset(config: yacs.config.CfgNode,
                                         train=is_train,
                                         transform=train_transform,
                                         download=True)
+                #use only 10% of the dataset
                 if config.train.small_train:
                     train_num = int(len(train_dataset) * 0.1)
                     train_subset, _ = torch.utils.data.dataset.random_split(train_dataset, [train_num, len(train_dataset)-train_num])
