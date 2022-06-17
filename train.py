@@ -8,6 +8,7 @@ try:
     import apex
 except ImportError:
     pass
+from datetime import datetime
 import numpy as np
 import pandas as pd
 import torch
@@ -44,6 +45,7 @@ from pytorch_image_classification.utils import (
     setup_cudnn,
 )
 
+
 global_step = 0
 val_acc_log=[]
 val_loss_log=[]
@@ -53,6 +55,7 @@ def load_config():
     parser.add_argument('--config', type=str)
     parser.add_argument('--resume', type=str, default='')
     parser.add_argument('--local_rank', type=int, default=0)
+    parser.add_argument('--fname',type=str, default="acc_log", help='excel file name')
     parser.add_argument('options', default=None, nargs=argparse.REMAINDER)
     args = parser.parse_args()
 
@@ -70,7 +73,7 @@ def load_config():
     config.merge_from_list(['train.dist.local_rank', args.local_rank])
     config = update_config(config)
     config.freeze()
-    return config
+    return config, args.fname
 
 
 def subdivide_batch(config, data, targets):
@@ -332,7 +335,7 @@ def validate(epoch, config, model, loss_func, val_loader, logger,
 def main():
     global global_step
 
-    config = load_config()
+    config, fname = load_config()
 
     set_seed(config)
     setup_cudnn(config)
@@ -347,7 +350,10 @@ def main():
                                 world_size=config.train.dist.world_size)
         torch.cuda.set_device(config.train.dist.local_rank)
 
-    output_dir = pathlib.Path(config.train.output_dir)
+    output_d = "experiments/" + config.dataset.name + "/" + fname
+    #datetime.now().strftime("%m-%d.%H'%M")
+    output_dir = pathlib.Path(output_d)
+
     if get_rank() == 0:
         #if not config.train.resume and output_dir.exists():
         #    raise RuntimeError(
@@ -458,17 +464,17 @@ def main():
     tensorboard_writer2.close()
 
     acc_data = np.concatenate(([val_acc_log],[val_loss_log]), axis=0)
-    export_toexcel(config, acc_data)
+    export_toexcel(config, acc_data, output_d)
     
-def export_toexcel(config, data):
+def export_toexcel(config, data, dir):
 
     df = pd.DataFrame(data)
     df = (df.T)
     
-    xlsx_path = config.train.output_dir + '/acc_log_True.xlsx' #Small_train True
+    xlsx_path = dir + '/test_acc.xlsx'
     writer1 = pd.ExcelWriter(xlsx_path , engine='xlsxwriter')
 
-    df.columns = ['val_acc', 'val_loss']
+    df.columns = ['test_acc', 'test_loss']
     df.to_excel(writer1)
     writer1.save()
     print("SAVE acc_log.xlsx successfully")

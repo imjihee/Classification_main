@@ -33,7 +33,10 @@ pip install -r requirements.txt
 ## Usage-Jihee
 
 ```bash
-python train.py --config configs/cifar/resnet_preact.yaml
+CUDA_VISIBLE_DEVICES=0,1 python train.py --config configs/cifar/resnet.yaml --fname small_aug_randomcrop
+
+#tensorboard usage
+tensorboard --logdir=./tensorb
 ```
 
 ## Highlight locations

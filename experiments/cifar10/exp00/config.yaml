@@ -68,7 +68,7 @@ model:
     add_last_bn: False
     preact_stage: [True, True, True]
 train:
-  checkpoint: /home/esoc/jihee/Image_Classification/experiments/cifar10/resnet/exp00/checkpoint_00160.pth
+  checkpoint: ''
   resume: False
   use_apex: True
   precision: O0
@@ -120,7 +120,7 @@ optim:
     final_lr: 0.1
     gamma: 0.001
 scheduler:
-  epochs: 10
+  epochs: 100
   warmup:
     type: none
     epochs: 0
@@ -146,7 +146,7 @@ augmentation:
   use_random_erasing: False
   use_dual_cutout: False
   use_mixup: False
-  use_ricap: False
+  use_ricap: True
   use_cutmix: False
   use_label_smoothing: False
   random_crop:

@@ -5,9 +5,10 @@ model:
   resnet:
     depth: 50
 train:
-  checkpoint: /home/esoc/jihee/Image_Classification/experiments/cifar10/resnet/exp00/checkpoint_00160.pth
   small_train: True
   output_dir: experiments/cifar10/exp00
   checkpoint_period: 100
 scheduler:
-  epochs: 10
+  epochs: 100
+augmentation:
+  use_ricap: True
