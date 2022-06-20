@@ -376,6 +376,7 @@ def main():
     train_loader, val_loader = create_dataloader(config, is_train=True)
 
     model = create_model(config)
+
     macs, n_params = count_op(config, model)
     logger.info(f'MACs   : {macs}')
     logger.info(f'#params: {n_params}')
@@ -397,13 +398,8 @@ def main():
 
     start_epoch = config.train.start_epoch
     scheduler.last_epoch = start_epoch
-
-    #pretrained weights
-    #model = torchvision_models.resnet50(pretrained=True)
-    #fc_in = model.fc.in_features
-    #model.fc = nn.Linear(fc_in, 10)
-    #model.fc.reset_parameters()
     
+    #model - if resume or checkpoint
     if config.train.resume:
         checkpoint_config = checkpointer.resume_or_load('', resume=True)
         global_step = checkpoint_config['global_step']
@@ -419,6 +415,12 @@ def main():
         else:
             #print("*****", model.state_dict().keys())
             model.load_state_dict(checkpoint['model'], strict = False)
+            
+    #pretrained weights
+    pretrain = torchvision_models.resnet50(pretrained=True)
+    fc_in = model.fc.in_features
+    pretrain.fc = nn.Linear(fc_in, 10)
+    model.load_state_dict(pretrain.state_dict(), strict = False)
 
     if get_rank() == 0 and config.train.use_tensorboard:
         tensorboard_writer = create_tensorboard_writer(
@@ -428,14 +430,15 @@ def main():
     else:
         tensorboard_writer = DummyWriter()
         tensorboard_writer2 = DummyWriter()
-
+    #set loss
     train_loss, val_loss = create_loss(config)
 
+    #START VALIDATE, TRAIN
     if (config.train.val_period > 0 and start_epoch == 0
             and config.train.val_first):
         validate(0, config, model, val_loss, val_loader, logger,
                  tensorboard_writer)
-
+    
     for epoch, seed in enumerate(epoch_seeds[start_epoch:], start_epoch):
         epoch += 1
 

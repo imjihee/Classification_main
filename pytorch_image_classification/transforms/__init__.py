@@ -12,6 +12,7 @@ from .transforms import (
     RandomResizeCrop,
     Resize,
     ToTensor,
+    ShiftScaleRotate,
 )
 
 from .cutout import Cutout, DualCutout
@@ -74,6 +75,8 @@ def create_cifar_transform(config: yacs.config.CfgNode,
             transforms.append(RandomErasing(config))
         if config.augmentation.use_dual_cutout:
             transforms.append(DualCutout(config))
+        if config.augmentation.use_shiftscalerotate:
+            transforms.append(ShiftScaleRotate(config))
 
         transforms.append(ToTensor())
     else:

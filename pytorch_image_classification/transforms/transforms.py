@@ -2,9 +2,12 @@ from typing import Tuple, Union
 
 import numpy as np
 import PIL.Image
+#from PIL import Image
 import torch
 import torchvision
 import yacs.config
+import albumentations
+from time import sleep
 
 
 class CenterCrop:
@@ -54,8 +57,7 @@ class RandomHorizontalFlip:
             config.augmentation.random_horizontal_flip.prob)
 
     def __call__(self, data: PIL.Image.Image) -> PIL.Image.Image:
-        return self.transform(data)
-
+        return self.transform(data) #return PIL image
 
 class Resize:
     def __init__(self, config: yacs.config.CfgNode):
@@ -64,7 +66,59 @@ class Resize:
     def __call__(self, data: PIL.Image.Image) -> PIL.Image.Image:
         return self.transform(data)
 
+""" Added Albumentations """
+class ShiftScaleRotate:
+    def __init__(self, config: yacs.config.CfgNode):
+        self.transform = albumentations.ShiftScaleRotate(p = 0.3)
 
+    def __call__(self, data: PIL.Image.Image) -> PIL.Image.Image:
+        temp =self.transform(image = data)
+        return temp['image']  
+
+class RandomRotate90:
+    def __init__(self, config: yacs.config.CfgNode):
+        self.transform = albumentations.RandomRotate90(p = 0.3)
+
+    def __call__(self, data: PIL.Image.Image) -> PIL.Image.Image:
+        temp =self.transform(image = data)
+        return temp['image']
+
+class RandomGridShuffle:
+    def __init__(self, args):
+        self.transform = albumentations.RandomGridShuffle(
+            args.randomgridshuffle_grid,
+            p = 1
+        )
+
+    def __call__(self, **data: PIL.Image.Image) -> PIL.Image.Image:
+        return self.transform(image=data['image'])
+
+class CenterCrop:
+    def __init__(self, args):
+        self.transform = albumentations.CenterCrop(
+            args.center_crop, args.center_crop, 
+            p = 1
+        )
+
+    def __call__(self, **data: PIL.Image.Image) -> PIL.Image.Image:
+        return self.transform(image=data['image'])
+
+class Transpose:
+    def __init__(self, args):
+        self.transform = albumentations.Transpose(p = 1)
+
+    def __call__(self, **data: PIL.Image.Image) -> PIL.Image.Image:
+        return self.transform(image=data['image'])
+
+class ColorJitter:
+    def __init__(self, args):
+        self.transform = albumentations.ColorJitter(
+        p = 1  )
+
+    def __call__(self, **data: PIL.Image.Image) -> PIL.Image.Image:
+        return self.transform(image=data['image'])
+
+"""----------------------------------------------------"""
 class ToTensor:
     def __call__(
         self, data: Union[np.ndarray, Tuple[np.ndarray, ...]]

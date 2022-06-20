@@ -183,6 +183,7 @@ config.train.dist.node_rank = -1
 config.train.dist.local_rank = 0
 config.train.dist.use_sync_bn = False
 
+#augmentation
 config.augmentation = ConfigNode()
 config.augmentation.use_random_crop = True
 config.augmentation.use_random_horizontal_flip = True
@@ -193,6 +194,7 @@ config.augmentation.use_mixup = False
 config.augmentation.use_ricap = False
 config.augmentation.use_cutmix = False
 config.augmentation.use_label_smoothing = False
+config.augmentation.use_shiftscalerotate = False
 
 config.augmentation.random_crop = ConfigNode()
 config.augmentation.random_crop.padding = 4
