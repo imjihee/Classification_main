@@ -6,9 +6,7 @@ import PIL.Image
 import torch
 import torchvision
 import yacs.config
-import albumentations
-from time import sleep
-
+import albumentations #https://pypi.org/project/albumentations/
 
 class CenterCrop:
     def __init__(self, config: yacs.config.CfgNode):
@@ -66,57 +64,81 @@ class Resize:
     def __call__(self, data: PIL.Image.Image) -> PIL.Image.Image:
         return self.transform(data)
 
+
 """ Added Albumentations """
 class ShiftScaleRotate:
     def __init__(self, config: yacs.config.CfgNode):
-        self.transform = albumentations.ShiftScaleRotate(p = 0.3)
+        self.transform = albumentations.ShiftScaleRotate(p = 0.2)
 
     def __call__(self, data: PIL.Image.Image) -> PIL.Image.Image:
         temp =self.transform(image = data)
         return temp['image']  
 
+
 class RandomRotate90:
     def __init__(self, config: yacs.config.CfgNode):
-        self.transform = albumentations.RandomRotate90(p = 0.3)
+        self.transform = albumentations.RandomRotate90(p = 0.2)
 
     def __call__(self, data: PIL.Image.Image) -> PIL.Image.Image:
         temp =self.transform(image = data)
         return temp['image']
 
+
 class RandomGridShuffle:
-    def __init__(self, args):
+    def __init__(self, config: yacs.config.CfgNode):
         self.transform = albumentations.RandomGridShuffle(
-            args.randomgridshuffle_grid,
-            p = 1
+            (5, 5),
+            p = 0.2
         )
 
-    def __call__(self, **data: PIL.Image.Image) -> PIL.Image.Image:
-        return self.transform(image=data['image'])
+    def __call__(self, data: PIL.Image.Image) -> PIL.Image.Image:
+        temp =self.transform(image = data)
+        return temp['image']
 
-class CenterCrop:
-    def __init__(self, args):
-        self.transform = albumentations.CenterCrop(
-            args.center_crop, args.center_crop, 
-            p = 1
-        )
-
-    def __call__(self, **data: PIL.Image.Image) -> PIL.Image.Image:
-        return self.transform(image=data['image'])
 
 class Transpose:
-    def __init__(self, args):
-        self.transform = albumentations.Transpose(p = 1)
+    def __init__(self, config: yacs.config.CfgNode):
+        self.transform = albumentations.Transpose(p = 0.2)
 
-    def __call__(self, **data: PIL.Image.Image) -> PIL.Image.Image:
-        return self.transform(image=data['image'])
+    def __call__(self, data: PIL.Image.Image) -> PIL.Image.Image:
+        temp =self.transform(image = data)
+        return temp['image']
+
 
 class ColorJitter:
-    def __init__(self, args):
+    def __init__(self, config: yacs.config.CfgNode):
         self.transform = albumentations.ColorJitter(
-        p = 1  )
+        p = 0.2  )
 
-    def __call__(self, **data: PIL.Image.Image) -> PIL.Image.Image:
-        return self.transform(image=data['image'])
+    def __call__(self, data: PIL.Image.Image) -> PIL.Image.Image:
+        temp =self.transform(image = data)
+        return temp['image']
+
+
+class Sharpen:
+    def __init__(self, config: yacs.config.CfgNode):
+        self.transform = albumentations.Sharpen(
+                alpha = (1,1), lightness = (0.5, 1.0),p = 0.5)
+
+    def __call__(self, data: PIL.Image.Image) -> PIL.Image.Image:
+        temp =self.transform(image = data)
+        return temp['image']
+
+class VerticalFlip:
+    def __init__(self, config: yacs.config.CfgNode):
+        self.transform = albumentations.VerticalFlip(p = 0.2)
+
+    def __call__(self, data: PIL.Image.Image) -> PIL.Image.Image:
+        temp =self.transform(image = data)
+        return temp['image']
+
+class ToSepia:
+    def __init__(self, config: yacs.config.CfgNode):
+        self.transform = albumentations.ToSepia(p = 0.2)
+
+    def __call__(self, data: PIL.Image.Image) -> PIL.Image.Image:
+        temp =self.transform(image = data)
+        return temp['image']
 
 """----------------------------------------------------"""
 class ToTensor:

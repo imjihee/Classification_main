@@ -417,9 +417,14 @@ def main():
             model.load_state_dict(checkpoint['model'], strict = False)
             
     #pretrained weights
+    if config.dataset.name == "CIFAR10":
+        fc_out = 10
+    elif config.dataset.name == "CIFAR100":
+        fc_out = 100
+        
     pretrain = torchvision_models.resnet50(pretrained=True)
     fc_in = model.fc.in_features
-    pretrain.fc = nn.Linear(fc_in, 10)
+    pretrain.fc = nn.Linear(fc_in, fc_out)
     model.load_state_dict(pretrain.state_dict(), strict = False)
 
     if get_rank() == 0 and config.train.use_tensorboard:
@@ -465,6 +470,8 @@ def main():
 
     tensorboard_writer.close()
     tensorboard_writer2.close()
+
+    print("* Best test accuracy: ", max(val_acc_log))
 
     acc_data = np.concatenate(([val_acc_log],[val_loss_log]), axis=0)
     export_toexcel(config, acc_data, output_d)

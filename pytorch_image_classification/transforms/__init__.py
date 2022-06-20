@@ -13,6 +13,13 @@ from .transforms import (
     Resize,
     ToTensor,
     ShiftScaleRotate,
+    RandomRotate90,
+    RandomGridShuffle,
+    Transpose,
+    ColorJitter,
+    Sharpen,
+    VerticalFlip,
+    ToSepia,
 )
 
 from .cutout import Cutout, DualCutout
@@ -77,6 +84,20 @@ def create_cifar_transform(config: yacs.config.CfgNode,
             transforms.append(DualCutout(config))
         if config.augmentation.use_shiftscalerotate:
             transforms.append(ShiftScaleRotate(config))
+        if config.augmentation.use_random_rotate90:
+            transforms.append(RandomRotate90(config))
+        if config.augmentation.use_random_grid_shuffle:
+            transforms.append(RandomGridShuffle(config))
+        if config.augmentation.use_transpose:
+            transforms.append(Transpose(config))
+        if config.augmentation.use_colorjitter:
+            transforms.append(ColorJitter(config))
+        if config.augmentation.use_sharpen:
+            transforms.append(Sharpen(config))
+        if config.augmentation.use_vertical_flip:
+            transforms.append(VerticalFlip(config))
+        if config.augmentation.use_tosepia:
+            transforms.append(ToSepia(config))
 
         transforms.append(ToTensor())
     else:

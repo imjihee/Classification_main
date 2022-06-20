@@ -185,8 +185,8 @@ config.train.dist.use_sync_bn = False
 
 #augmentation
 config.augmentation = ConfigNode()
-config.augmentation.use_random_crop = True
-config.augmentation.use_random_horizontal_flip = True
+config.augmentation.use_random_crop = False
+config.augmentation.use_random_horizontal_flip = False
 config.augmentation.use_cutout = False
 config.augmentation.use_random_erasing = False
 config.augmentation.use_dual_cutout = False
@@ -195,6 +195,14 @@ config.augmentation.use_ricap = False
 config.augmentation.use_cutmix = False
 config.augmentation.use_label_smoothing = False
 config.augmentation.use_shiftscalerotate = False
+config.augmentation.use_random_rotate90 = False
+config.augmentation.use_random_grid_shuffle = False
+config.augmentation.use_transpose = False
+config.augmentation.use_colorjitter = False
+config.augmentation.use_sharpen = False
+config.augmentation.use_vertical_flip = False
+config.augmentation.use_tosepia = False
+
 
 config.augmentation.random_crop = ConfigNode()
 config.augmentation.random_crop.padding = 4

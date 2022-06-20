@@ -1,4 +1,4 @@
-# PyTorch Image Classification
+## PyTorch Image Classification
 
 Following papers are implemented using PyTorch.
 
@@ -30,7 +30,7 @@ Following papers are implemented using PyTorch.
 pip install -r requirements.txt
 ```
 
-## Usage-Jihee
+## Usage (Jihee)
 
 ```bash
 CUDA_VISIBLE_DEVICES=0,1 python train.py --config configs/cifar/resnet.yaml --fname small_aug_randomcrop
@@ -42,6 +42,14 @@ tensorboard --logdir=./tensorb
 ## Highlight locations
 
 * train_small -> datasets.py
+
+* albumentations -> transforms.py https://pypi.org/project/albumentations/
+
+## NOTE
+
+* train_small is implemented only for CIFAR
+
+* Added transformations: random_horizontal_flip, shiftscalerotate, random_rotate90, random_grid_shuffle, transpose, sharpen, vertical_flip, tosepia
 
 ## Results on CIFAR-10
 
