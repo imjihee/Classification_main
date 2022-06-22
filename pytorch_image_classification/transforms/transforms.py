@@ -140,6 +140,14 @@ class ToSepia:
         temp =self.transform(image = data)
         return temp['image']
 
+class ChannelShuffle:
+    def __init__(self, config: yacs.config.CfgNode):
+        self.transform = albumentations.ChannelShuffle(p = 0.2)
+
+    def __call__(self, data: PIL.Image.Image) -> PIL.Image.Image:
+        temp =self.transform(image = data)
+        return temp['image']
+
 """----------------------------------------------------"""
 class ToTensor:
     def __call__(

@@ -6,6 +6,7 @@ from .components import (
     CosineScheduler,
     ExponentialScheduler,
     LinearScheduler,
+    CosAScheduler,
 )
 from .multistep_scheduler import MultistepScheduler
 from .sgdr import SGDRScheduler
@@ -52,6 +53,10 @@ def _create_main_scheduler(config, main_steps):
         scheduler = SGDRScheduler(main_steps, 1, config.scheduler.T0,
                                   config.scheduler.T_mul,
                                   config.scheduler.lr_min_factor)
+    elif scheduler_type == 'cosineA':
+        scheduler = CosAScheduler(main_steps, 1,
+                                    config.scheduler.lr_min_factor, repeat = 2)
+
     else:
         raise ValueError()
 

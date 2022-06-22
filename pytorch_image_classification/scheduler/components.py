@@ -44,3 +44,15 @@ class LinearScheduler:
     def __call__(self, step):
         return self.lr_start + (self.lr_end -
                                 self.lr_start) * step / self.steps
+
+class CosAScheduler:
+    def __init__(self, steps, lr_start, lr_end, repeat):
+        self.steps = steps
+        self.lr_start = lr_start
+        self.lr_end = lr_end
+        self.con = steps // repeat * 2
+
+
+    def __call__(self, step):
+        step = step % (self.steps // repeat)
+        return self.lr_end + (self.lr_start - self.lr_end) * (1 + np.cos(step / self.con * np.pi))

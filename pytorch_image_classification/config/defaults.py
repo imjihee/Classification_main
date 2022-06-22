@@ -202,6 +202,7 @@ config.augmentation.use_colorjitter = False
 config.augmentation.use_sharpen = False
 config.augmentation.use_vertical_flip = False
 config.augmentation.use_tosepia = False
+config.augmentation.use_channel_shuffle = False
 
 
 config.augmentation.random_crop = ConfigNode()

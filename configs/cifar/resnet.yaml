@@ -40,9 +40,10 @@ validation:
     pin_memory: False
 scheduler:
   epochs: 200
-  type: multistep
-  milestones: [80, 120]
+  type: cosineA #constant, multistep, linear, cosine, sgdr
+  milestones: [80, 120] # at multistep
   lr_decay: 0.1
+  lr_min_factor: 0.001
 
 #!!! AUGMENTATION !!!
 augmentation:
@@ -57,13 +58,14 @@ augmentation:
   #
   use_random_horizontal_flip: True
   use_shiftscalerotate: True
-  use_random_rotate90: True
+  use_random_rotate90: False
   use_random_grid_shuffle: False
-  use_transpose: True
+  use_transpose: False
   use_colorjitter: False #err
   use_sharpen: True
-  use_vertical_flip: True
+  use_vertical_flip: False
   use_tosepia: True
+  use_channel_shuffle: False
   
   random_crop:
     padding: 4

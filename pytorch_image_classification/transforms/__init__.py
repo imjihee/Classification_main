@@ -20,6 +20,7 @@ from .transforms import (
     Sharpen,
     VerticalFlip,
     ToSepia,
+    ChannelShuffle,
 )
 
 from .cutout import Cutout, DualCutout
@@ -98,6 +99,8 @@ def create_cifar_transform(config: yacs.config.CfgNode,
             transforms.append(VerticalFlip(config))
         if config.augmentation.use_tosepia:
             transforms.append(ToSepia(config))
+        if config.augmentation.use_channel_shuffle:
+            transforms.append(ChannelShuffle(config))
 
         transforms.append(ToTensor())
     else:
